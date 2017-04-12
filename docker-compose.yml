@@ -1,37 +1,24 @@
-minio:
-  image: minio/minio
-  environment:
-    MINIO_ACCESS_KEY: B9F73RPKQ0NPOE3CJ3VM
-    MINIO_SECRET_KEY: euSnXjnD7X/FdbMdqHPFfBzaNimLW8Gxgd7AK62O
+version: '2'
 
+services:
 
-backupvolume:
+ backup-minio:
+
+  image: rpi-backup-minio
+  container_name: backup-minio
   environment:
     CRON_TIME: '* * * * *'
-    #INIT_BACKUP: 'true'
-    INIT_RESTORE_LATEST: 'true'
-    #INIT_RESTORE_URL: 'myminio/databases/imimat.sql'
-    MINIO_HOST: myminio
-    MINIO_HOST_URL: 'http://minio:9000'
-    MINIO_ACCESS_KEY: 'B9F73RPKQ0NPOE3CJ3VM'
-    MINIO_SECRET_KEY: 'euSnXjnD7X/FdbMdqHPFfBzaNimLW8Gxgd7AK62O'
-    MINIO_BUCKET: 'resticb11'
-    BACKUP_DIRS: '/app'
-    USE_RESTIC: 'true'
-    RESTIC_FORGET: '-l 2'
-  links:
-    - minio:minio
+    INIT_BACKUP: 'true'
+    MINIO_HOST: minio
+    MINIO_HOST_URL: 'http://172.17.0.1:9000'
+    MINIO_ACCESS_KEY: 'nibz78'
+    MINIO_SECRET_KEY: '?Nitram78250'
+    MINIO_BUCKET: 'docker-volume-mysql'
+    BACKUP_DIRS: '/backup'
+    USE_RESTIC: 'false'
+  entrypoint: /bin/sh
   tty: true
-  build: .
-  command: /run.sh
-  #image: jmcarbo/docker-volume-backup
-  volumes_from:
-    - test
+  stdin_open: true
 
-test:
   volumes:
-    - app:/app
-  image: ubuntu
-  command: /bin/bash
-  tty: true
-  stdin_open: true 
+          - /backup:/backup
